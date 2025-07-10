@@ -1,22 +1,33 @@
-/* eslint-disable no-console */
-import { NextFunction, Request, Response } from "express";
-import { StatusCodes } from "http-status-codes";
+import { Request, Response } from "express";
 import { UserServices } from "./user.service";
+import { catchAsync } from "../../utils/catch-async";
+import { sendResponse } from "../../utils/send-response";
+import httpStatus from "http-status-codes";
 
-const createUser = async (req: Request, res: Response, next: NextFunction) => {
-	try {
-		throw new Error("This is a test error for global error handler");
-		const user = await UserServices.createUser(req.body);
-		res.status(StatusCodes.CREATED).json({
-			message: "User created successfully",
-			user,
-		});
-	} catch (error) {
-		console.log(error);
-		next(error);
-	}
-};
+const createUser = catchAsync(async (req: Request, res: Response) => {
+	const user = await UserServices.createUser(req.body);
+
+	sendResponse(res, {
+		statusCode: httpStatus.CREATED,
+		success: true,
+		message: "User created successfully",
+		data: user,
+	});
+});
+
+const getAllUsers = catchAsync(async (_req: Request, res: Response) => {
+	const result = await UserServices.getAllUsers();
+	
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		message: "All users retrieved successfully",
+		success: true,
+		data: result.data,
+		meta: result.meta,
+	});
+});
 
 export const UserController = {
 	createUser,
+	getAllUsers,
 };
