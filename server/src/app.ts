@@ -1,6 +1,8 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import { router } from "./app/routes";
+import { globalErrorHandler } from "./app/middlewares/global-error";
+import { notFoundHandler } from "./app/middlewares/not-found";
 
 const app = express();
 app.use(express.json());
@@ -13,5 +15,8 @@ app.get("/", (_req: Request, res: Response) => {
 		message: "Server health is OK",
 	});
 });
+
+app.use(globalErrorHandler);
+app.use(notFoundHandler);
 
 export default app;

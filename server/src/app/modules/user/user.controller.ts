@@ -1,31 +1,19 @@
 /* eslint-disable no-console */
-import { Request, Response } from "express";
+import { NextFunction, Request, Response } from "express";
 import { StatusCodes } from "http-status-codes";
-import { User } from "./user.model";
+import { UserServices } from "./user.service";
 
-const createUser = async (req: Request, res: Response) => {
+const createUser = async (req: Request, res: Response, next: NextFunction) => {
 	try {
-		const { name, email } = req.body;
-
-		const user = await User.create({
-			name,
-			email,
-		});
+		throw new Error("This is a test error for global error handler");
+		const user = await UserServices.createUser(req.body);
 		res.status(StatusCodes.CREATED).json({
 			message: "User created successfully",
 			user,
 		});
 	} catch (error) {
 		console.log(error);
-		if (error instanceof Error) {
-			res
-				.status(StatusCodes.INTERNAL_SERVER_ERROR)
-				.json({ message: error.message });
-		} else {
-			res
-				.status(StatusCodes.INTERNAL_SERVER_ERROR)
-				.json({ message: "An unexpected error occurred." });
-		}
+		next(error);
 	}
 };
 
