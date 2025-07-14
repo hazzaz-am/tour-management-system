@@ -1,7 +1,9 @@
+/* eslint-disable no-console */
 import { Server } from "http";
 import mongoose from "mongoose";
 import app from "./app";
 import { envVars } from "./app/config/env";
+import { seedSuperAdmin } from "./app/utils/seedSuperAdmin";
 
 let server: Server;
 
@@ -17,7 +19,10 @@ const startServer = async () => {
 	}
 };
 
-startServer();
+(async () => {
+	await startServer();
+	await seedSuperAdmin();
+})();
 
 /**
  * Handles graceful shutdown on SIGTERM signal (e.g., from process managers or system shutdown)
