@@ -1,3 +1,4 @@
+/* eslint-disable no-unused-vars */
 import { Types } from "mongoose";
 
 export enum Role {
@@ -25,6 +26,7 @@ export enum IsActive {
 }
 
 export interface IUser {
+	_id?: Types.ObjectId;
 	name: string;
 	email: string;
 	password?: string;
