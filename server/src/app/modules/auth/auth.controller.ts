@@ -42,6 +42,7 @@ const logout = catchAsync(async (_req: Request, res: Response) => {
 		secure: false,
 		sameSite: "lax",
 	});
+
 	res.clearCookie("refreshToken", {
 		httpOnly: true,
 		secure: false,
@@ -50,7 +51,7 @@ const logout = catchAsync(async (_req: Request, res: Response) => {
 
 	sendResponse(res, {
 		statusCode: httpStatus.OK,
-		message: "Log out successful",
+		message: "Logout successful",
 		success: true,
 		data: null,
 	});
