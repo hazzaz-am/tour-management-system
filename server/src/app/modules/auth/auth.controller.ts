@@ -5,6 +5,8 @@ import { sendResponse } from "../../utils/send-response";
 import httpStatus from "http-status-codes";
 import AppError from "../../error-helpers/app-error";
 import { setCookie } from "../../utils/set-cookie";
+import { envVars } from "../../config/env";
+import { userTokens } from "../../utils/user-tokens";
 
 const credentialsLogin = catchAsync(async (req: Request, res: Response) => {
 	const loginInfo = await AuthServices.credentialsLogin(req.body);
@@ -40,6 +42,10 @@ const resetPassword = catchAsync(async (req: Request, res: Response) => {
 	const decodedToken = req.user;
 	const { oldPassword, newPassword } = req.body;
 
+	if (!decodedToken) {
+		throw new AppError(httpStatus.NOT_FOUND, "User not found");
+	}
+
 	await AuthServices.resetPassword(oldPassword, newPassword, decodedToken);
 
 	sendResponse(res, {
@@ -71,9 +77,28 @@ const logout = catchAsync(async (_req: Request, res: Response) => {
 	});
 });
 
+const googleCallback = catchAsync(async (req: Request, res: Response) => {
+	let redirectTo = req.query.state ? (req.query.state as string) : "";
+
+	if (redirectTo.startsWith("/")) {
+		redirectTo = redirectTo.slice(1);
+	}
+	const user = req.user;
+
+	if (!user) {
+		throw new AppError(httpStatus.NOT_FOUND, "User not found");
+	}
+
+	const tokenInfo = userTokens(user);
+	setCookie(res, tokenInfo);
+
+	res.redirect(`${envVars.FRONTEND_URL}/${redirectTo}`);
+});
+
 export const AuthControllers = {
 	credentialsLogin,
 	getNewAccessToken,
 	resetPassword,
+	googleCallback,
 	logout,
 };
