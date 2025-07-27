@@ -36,6 +36,20 @@ const getNewAccessToken = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+const resetPassword = catchAsync(async (req: Request, res: Response) => {
+	const decodedToken = req.user;
+	const { oldPassword, newPassword } = req.body;
+
+	await AuthServices.resetPassword(oldPassword, newPassword, decodedToken);
+
+	sendResponse(res, {
+		statusCode: httpStatus.OK,
+		message: "Password changed successfully",
+		success: true,
+		data: null,
+	});
+});
+
 const logout = catchAsync(async (_req: Request, res: Response) => {
 	res.clearCookie("accessToken", {
 		httpOnly: true,
@@ -60,5 +74,6 @@ const logout = catchAsync(async (_req: Request, res: Response) => {
 export const AuthControllers = {
 	credentialsLogin,
 	getNewAccessToken,
+	resetPassword,
 	logout,
 };
