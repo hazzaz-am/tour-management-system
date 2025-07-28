@@ -1,4 +1,5 @@
-import { Request, Response } from "express";
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { NextFunction, Request, Response } from "express";
 import { catchAsync } from "../../utils/catch-async";
 import { AuthServices } from "./auth.service";
 import { sendResponse } from "../../utils/send-response";
@@ -6,19 +7,46 @@ import httpStatus from "http-status-codes";
 import AppError from "../../error-helpers/app-error";
 import { setCookie } from "../../utils/set-cookie";
 import { envVars } from "../../config/env";
-import { userTokens } from "../../utils/user-tokens";
+import { createUserTokens } from "../../utils/user-tokens";
+import passport from "passport";
 
-const credentialsLogin = catchAsync(async (req: Request, res: Response) => {
-	const loginInfo = await AuthServices.credentialsLogin(req.body);
-	setCookie(res, loginInfo);
+const credentialsLogin = catchAsync(
+	async (req: Request, res: Response, next: NextFunction) => {
+		const passportAuthenticateHandler = async (
+			err: any,
+			user: any,
+			info: any
+		) => {
+			if (err) {
+				return next(new AppError(401, err));
+			}
 
-	sendResponse(res, {
-		statusCode: httpStatus.OK,
-		message: "Log in successful",
-		success: true,
-		data: loginInfo,
-	});
-});
+			if (!user) {
+				return next(new AppError(401, info.message));
+			}
+
+			const userTokens = createUserTokens(user);
+
+			const updatedUser = user.toObject();
+			delete updatedUser["password"];
+
+			setCookie(res, userTokens);
+
+			sendResponse(res, {
+				statusCode: httpStatus.OK,
+				message: "Log in successful",
+				success: true,
+				data: {
+					accessToken: userTokens.accessToken,
+					refreshToken: userTokens.refreshToken,
+					user: updatedUser,
+				},
+			});
+		};
+
+		passport.authenticate("local", passportAuthenticateHandler)(req, res, next);
+	}
+);
 
 const getNewAccessToken = catchAsync(async (req: Request, res: Response) => {
 	const refreshToken = req.cookies.refreshToken;
@@ -89,7 +117,7 @@ const googleCallback = catchAsync(async (req: Request, res: Response) => {
 		throw new AppError(httpStatus.NOT_FOUND, "User not found");
 	}
 
-	const tokenInfo = userTokens(user);
+	const tokenInfo = createUserTokens(user);
 	setCookie(res, tokenInfo);
 
 	res.redirect(`${envVars.FRONTEND_URL}/${redirectTo}`);

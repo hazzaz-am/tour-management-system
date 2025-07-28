@@ -6,7 +6,7 @@ import { generateToken, verifyToken } from "./jwt-token";
 import { User } from "../modules/user/user.model";
 import httpStatus from "http-status-codes";
 
-export const userTokens = (user: Partial<IUser>) => {
+export const createUserTokens = (user: Partial<IUser>) => {
 	const jwtPayload = {
 		userId: user._id,
 		email: user.email,
