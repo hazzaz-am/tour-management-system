@@ -24,6 +24,12 @@ const tourSchema = new Schema<ITour>(
 			type: String,
 			unique: true,
 		},
+		departureLocation: {
+			type: String,
+		},
+		arrivalLocation: {
+			type: String,
+		},
 		description: String,
 		images: {
 			type: [String],
