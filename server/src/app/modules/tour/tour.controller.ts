@@ -6,8 +6,9 @@ import { sendResponse } from "../../utils/send-response";
 /**
  * Tour Controllers
  */
-const getAllTours = catchAsync(async (_req: Request, res: Response) => {
-	const result = await TourServices.getAllTours();
+const getAllTours = catchAsync(async (req: Request, res: Response) => {
+	const query = req.query
+	const result = await TourServices.getAllTours(query as Record<string, string>);
 
 	sendResponse(res, {
 		statusCode: 200,

@@ -1,4 +1,6 @@
 import AppError from "../../error-helpers/app-error";
+import { QueryBuilder } from "../../utils/QueryBuilder";
+import { TOURSEARCHABLEFIELDS } from "./tour.constants";
 import { ITour, ITourType } from "./tour.interface";
 import { Tour, TourType } from "./tour.model";
 import httpStatus from "http-status-codes";
@@ -6,15 +8,24 @@ import httpStatus from "http-status-codes";
 /**
  * Tour Services
  */
-const getAllTours = async () => {
-	const tours = await Tour.find({});
-	const totalTours = await Tour.countDocuments();
+
+const getAllTours = async (query: Record<string, string>) => {
+	const queryBuilder = new QueryBuilder(Tour.find(), query);
+	const tours = await queryBuilder
+		.search(TOURSEARCHABLEFIELDS)
+		.filter()
+		.sort()
+		.fields()
+		.paginate();
+
+	const [data, meta] = await Promise.all([
+		tours.build(),
+		queryBuilder.getMeta(),
+	]);
 
 	return {
-		data: tours,
-		meta: {
-			total: totalTours,
-		},
+		data: data,
+		meta: meta,
 	};
 };
 
