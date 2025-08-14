@@ -26,4 +26,6 @@ router.patch(
 	UserController.updateUser
 );
 
+router.get("/:id", UserController.getSingleUser);
+
 export const UserRoutes = router;

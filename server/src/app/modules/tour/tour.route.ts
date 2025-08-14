@@ -21,6 +21,7 @@ router.post(
 	schemaValidation(createTourZodSchema),
 	TourControllers.createTour
 );
+router.get("/:slug", TourControllers.getSingleTour)
 router.patch(
 	"/:id",
 	checkAuth(Role.ADMIN, Role.SUPER_ADMIN),
@@ -43,6 +44,9 @@ router.post(
 	schemaValidation(createTourTypeZodSchema),
 	TourControllers.createTourType
 );
+
+router.get("/tour-types/:id", TourControllers.getSingleTourType);
+
 router.patch(
 	"/tour-types/:id",
 	checkAuth(Role.ADMIN, Role.SUPER_ADMIN),

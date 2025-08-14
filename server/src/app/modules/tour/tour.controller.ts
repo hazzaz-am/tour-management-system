@@ -7,8 +7,10 @@ import { sendResponse } from "../../utils/send-response";
  * Tour Controllers
  */
 const getAllTours = catchAsync(async (req: Request, res: Response) => {
-	const query = req.query
-	const result = await TourServices.getAllTours(query as Record<string, string>);
+	const query = req.query;
+	const result = await TourServices.getAllTours(
+		query as Record<string, string>
+	);
 
 	sendResponse(res, {
 		statusCode: 200,
@@ -18,6 +20,19 @@ const getAllTours = catchAsync(async (req: Request, res: Response) => {
 		meta: result.meta,
 	});
 });
+
+const getSingleTour = catchAsync(async(req: Request, res: Response) => {
+	const slug = req.params.slug
+	const result = await TourServices.getSingleTour(slug)
+
+	sendResponse(res, {
+		success: true,
+		message: "Tour retrived successfully",
+		statusCode: 200,
+		data: result
+	})
+})
+
 
 const createTour = catchAsync(async (req: Request, res: Response) => {
 	const body = req.body;
@@ -56,17 +71,33 @@ const deleteTour = catchAsync(async (req: Request, res: Response) => {
 	});
 });
 
+// ---------------------------------------------------------------------
 /**
  * Tour Types Controllers
  */
-const getAllTourTypes = catchAsync(async (_req: Request, res: Response) => {
-	const result = await TourServices.getAllTourTypes();
+const getAllTourTypes = catchAsync(async (req: Request, res: Response) => {
+	const query = req.query;
+	const result = await TourServices.getAllTourTypes(
+		query as Record<string, string>
+	);
 
 	sendResponse(res, {
 		statusCode: 200,
 		success: true,
 		message: "Tour types retrieved successfully",
 		data: result,
+	});
+});
+
+const getSingleTourType = catchAsync(async (req: Request, res: Response) => {
+	const id = req.params.id;
+	const result = await TourServices.getSingleTourType(id);
+
+	sendResponse(res, {
+		success: true,
+		data: result,
+		message: "Tour type retrieved successfully",
+		statusCode: 200,
 	});
 });
 
@@ -109,6 +140,7 @@ const deleteTourType = catchAsync(async (req: Request, res: Response) => {
 
 export const TourControllers = {
 	getAllTours,
+	getSingleTour,
 	createTour,
 	updatedTour,
 	deleteTour,
@@ -116,4 +148,5 @@ export const TourControllers = {
 	createTourType,
 	updatedTourType,
 	deleteTourType,
+	getSingleTourType,
 };
