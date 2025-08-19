@@ -9,6 +9,7 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import PasswordInput from "@/components/ui/password-input";
+import { envConfig } from "@/config";
 import { cn } from "@/lib/utils";
 import { useLoginMutation } from "@/store/features/auth/authApi";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,16 +38,24 @@ export default function LoginForm({
 		},
 	});
 	const [login] = useLoginMutation();
+
 	const onSubmit = async (data: z.infer<typeof loginFormSchema>) => {
 		try {
 			const res = await login(data).unwrap();
-			console.log(res);
-		} catch (err) {
+			if (res.success) {
+				toast.success("Logged in successfully");
+				navigate("/")
+			}
+		} catch (err: any) {
 			console.error(err);
 
-			if (err.status === 401) {
+			if (err.data.message === "User is not verified") {
 				toast.error("Your account is not verified");
 				navigate("/verify", { state: data.email });
+			}
+
+			if (err.data.message === "Password does not match") {
+				toast.error("Invalid credentials");
 			}
 		}
 	};
@@ -103,6 +112,7 @@ export default function LoginForm({
 				</div>
 
 				<Button
+				onClick={() => window.open(`${envConfig.baseUrl}/auth/google`)}
 					type="button"
 					variant="outline"
 					className="w-full cursor-pointer"
