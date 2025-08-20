@@ -1,0 +1,6 @@
+export const ROLE = {
+	PUBLIC: "PUBLIC",
+	SUPER_ADMIN: "SUPER_ADMIN",
+	ADMIN: "ADMIN",
+	USER: "USER",
+};

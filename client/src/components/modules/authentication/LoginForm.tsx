@@ -44,7 +44,7 @@ export default function LoginForm({
 			const res = await login(data).unwrap();
 			if (res.success) {
 				toast.success("Logged in successfully");
-				navigate("/")
+				navigate("/");
 			}
 		} catch (err: any) {
 			console.error(err);
@@ -112,7 +112,7 @@ export default function LoginForm({
 				</div>
 
 				<Button
-				onClick={() => window.open(`${envConfig.baseUrl}/auth/google`)}
+					onClick={() => window.open(`${envConfig.baseUrl}/auth/google`)}
 					type="button"
 					variant="outline"
 					className="w-full cursor-pointer"

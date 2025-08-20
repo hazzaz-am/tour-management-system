@@ -19,11 +19,21 @@ import {
 	useUserInfoQuery,
 } from "@/store/features/auth/authApi";
 import { useAppDispatch } from "@/store/hooks";
+import { ROLE } from "@/constants/role";
+
+interface INavigationLink {
+	href: string;
+	label: string;
+	role: string;
+}
 
 // Navigation links array to be used in both desktop and mobile menus
-const navigationLinks = [
-	{ href: "/", label: "Home" },
-	{ href: "/about", label: "About" },
+const navigationLinks: INavigationLink[] = [
+	{ href: "/", label: "Home", role: ROLE.PUBLIC },
+	{ href: "/about", label: "About", role: ROLE.PUBLIC },
+	{ href: "/admin", label: "Dashboard", role: ROLE.SUPER_ADMIN },
+	{ href: "/admin", label: "Dashboard", role: ROLE.ADMIN },
+	{ href: "/user", label: "Dashboard", role: ROLE.USER },
 ];
 
 export default function Navbar() {
@@ -79,11 +89,22 @@ export default function Navbar() {
 							<NavigationMenu className="max-w-none *:w-full">
 								<NavigationMenuList className="flex-col items-start gap-0 md:gap-2">
 									{navigationLinks.map((link, index) => (
-										<NavigationMenuItem key={index} className="w-full">
-											<NavigationMenuLink asChild className="py-1.5">
-												<Link to={link.href}>{link.label}</Link>
-											</NavigationMenuLink>
-										</NavigationMenuItem>
+										<>
+											{link.role === ROLE.PUBLIC && (
+												<NavigationMenuItem key={index} className="w-full">
+													<NavigationMenuLink asChild className="py-1.5">
+														<Link to={link.href}>{link.label}</Link>
+													</NavigationMenuLink>
+												</NavigationMenuItem>
+											)}
+											{link.role === data?.data?.role && (
+												<NavigationMenuItem key={index} className="w-full">
+													<NavigationMenuLink asChild className="py-1.5">
+														<Link to={link.href}>{link.label}</Link>
+													</NavigationMenuLink>
+												</NavigationMenuItem>
+											)}
+										</>
 									))}
 								</NavigationMenuList>
 							</NavigationMenu>
@@ -98,14 +119,22 @@ export default function Navbar() {
 						<NavigationMenu className="max-md:hidden">
 							<NavigationMenuList className="gap-2">
 								{navigationLinks.map((link, index) => (
-									<NavigationMenuItem key={index}>
-										<NavigationMenuLink
-											asChild
-											className="text-muted-foreground hover:text-primary py-1.5 font-medium"
-										>
-											<Link to={link.href}>{link.label}</Link>
-										</NavigationMenuLink>
-									</NavigationMenuItem>
+									<>
+										{link.role === ROLE.PUBLIC && (
+											<NavigationMenuItem key={index} className="w-full">
+												<NavigationMenuLink asChild className="py-1.5">
+													<Link to={link.href}>{link.label}</Link>
+												</NavigationMenuLink>
+											</NavigationMenuItem>
+										)}
+										{link.role === data?.data?.role && (
+											<NavigationMenuItem key={index} className="w-full">
+												<NavigationMenuLink asChild className="py-1.5">
+													<Link to={link.href}>{link.label}</Link>
+												</NavigationMenuLink>
+											</NavigationMenuItem>
+										)}
+									</>
 								))}
 							</NavigationMenuList>
 						</NavigationMenu>
