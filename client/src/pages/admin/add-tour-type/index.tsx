@@ -1,3 +1,4 @@
+import DeleteConfirmation from "@/components/delete-confirmation";
 import AddTourTypeModal from "@/components/modules/admin/tour-type/AddTourTypeModal";
 import UpdateTourTypeModal from "@/components/modules/admin/tour-type/UpdateTourTypeModal";
 import { Button } from "@/components/ui/button";
@@ -12,7 +13,7 @@ import {
 import {
 	useDeleteTourTypeMutation,
 	useGetAllTourTypesQuery,
-} from "@/store/features/tour/tour.Api";
+} from "@/store/features/tour-type/tourType.Api";
 import { Trash2 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -21,14 +22,15 @@ export default function AddTourType() {
 	const [deleteTourType] = useDeleteTourTypeMutation();
 
 	const handleDeleteTourType = async (tourTypeId: string) => {
+		const toastId = toast.loading("Deleting tour type...");
 		try {
 			const res = await deleteTourType(tourTypeId).unwrap();
 			if (res.success) {
-				toast.success("Tour type deleted successfully");
+				toast.success("Tour type deleted successfully", { id: toastId });
 			}
 		} catch (error) {
 			console.log(error);
-			toast.error("Failed to delete tour type");
+			toast.error("Failed to delete tour type", { id: toastId });
 		}
 	};
 
@@ -53,13 +55,15 @@ export default function AddTourType() {
 									{item?.name}
 								</TableCell>
 								<TableCell className="space-x-2">
-									<UpdateTourTypeModal item={item}/>
-									<Button
-										size="sm"
-										onClick={() => handleDeleteTourType(item._id)}
+									<UpdateTourTypeModal item={item} />
+
+									<DeleteConfirmation
+										onConfirm={() => handleDeleteTourType(item._id)}
 									>
-										<Trash2 />
-									</Button>
+										<Button size="sm">
+											<Trash2 />
+										</Button>
+									</DeleteConfirmation>
 								</TableCell>
 							</TableRow>
 						))}

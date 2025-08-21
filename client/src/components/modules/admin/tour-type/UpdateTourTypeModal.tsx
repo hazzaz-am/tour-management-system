@@ -17,7 +17,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useUpdateTourTypeMutation } from "@/store/features/tour/tour.Api";
+import { useUpdateTourTypeMutation } from "@/store/features/tour-type/tourType.Api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Edit2 } from "lucide-react";
 import { useForm } from "react-hook-form";

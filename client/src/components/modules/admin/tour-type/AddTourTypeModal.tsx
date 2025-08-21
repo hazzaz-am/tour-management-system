@@ -17,7 +17,7 @@ import {
 	FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useAddTourTypeMutation } from "@/store/features/tour/tour.Api";
+import { useAddTourTypeMutation } from "@/store/features/tour-type/tourType.Api";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
@@ -47,7 +47,7 @@ export default function AddTourTypeModal() {
 			toast.error("Failed to add tour type");
 		}
 	};
-	
+
 	return (
 		<Dialog>
 			<DialogTrigger asChild>
