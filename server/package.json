@@ -7,8 +7,9 @@
 		"build": "tsc",
 		"start": "node --unhandled-rejections=strict --env-file=.env dist/server.js",
 		"dev": "ts-node-dev --respawn --transpile-only --env-file=.env src/server.ts",
-		"typecheck": "tsc --noEmit",
-		"lint": "pnpm eslint ./src/app"
+		"lint": "pnpm eslint ./src/app",
+		"test": "jest",
+		"typecheck": "tsc --noEmit"
 	},
 	"keywords": [],
 	"author": "",
